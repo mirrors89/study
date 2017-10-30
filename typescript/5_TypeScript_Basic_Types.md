@@ -120,4 +120,4 @@ console.log(obj[sym]); // value
 
 **PREV > [4. Compiler Options](https://github.com/mirrors89/study/tree/master/typescript/4_Compiler_Options.md)**
 
-**NEXT > 6.var, let, const**
+**NEXT > [6. var, let, const](https://github.com/mirrors89/study/tree/master/typescript/6_var_let_const.md)**

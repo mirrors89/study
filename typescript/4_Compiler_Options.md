@@ -65,4 +65,4 @@
 
 **PREV > [3. IDE 활용](https://github.com/mirrors89/study/tree/master/typescript/3_IDE_활용.md)**
 
-**NEXT > 5.Typescript Basic Types**
+**NEXT > [5. TypeScript Basic Types](https://github.com/mirrors89/study/tree/master/typescript/5_TypeScript_Basic_Types.md)**
