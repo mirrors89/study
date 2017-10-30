@@ -33,4 +33,4 @@
 
 **PREV > [2. 개발환경 구축 및 컴파일러 사용](https://github.com/mirrors89/study/tree/master/typescript/2_개발환경_구축_및_컴파일러_사용.md)**
 
-**NEXT > 4. Compiler Option**
+**NEXT > [4. Compiler Options](https://github.com/mirrors89/study/tree/master/typescript/4_Compiler_Options.md)**
