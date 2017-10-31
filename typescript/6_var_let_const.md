@@ -26,4 +26,4 @@ const d = "디이";
 
 **PREV > [5. TypeScript Basic Types](https://github.com/mirrors89/study/tree/master/typescript/5_TypeScript_Basic_Types.md)**
 
-**NEXT > 7. Type assertions, Type alias**
+**NEXT > [7. Type assertions, Type alias](https://github.com/mirrors89/study/tree/master/typescript/7_Type_assertions_Type_alias.md)**
