@@ -49,4 +49,4 @@ let another: PersonTuple = ['Anna', 24];
 
 **PREV > [6. var, let, const](https://github.com/mirrors89/study/tree/master/typescript/6_var_let_const.md)**
 
-**NEXT > 8. Interface**
+**NEXT > [8. Interface](https://github.com/mirrors89/study/tree/master/typescript/8_Interface.md)**
