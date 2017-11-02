@@ -211,4 +211,4 @@ person.toString();
 
 **PREV > [8. Interface](https://github.com/mirrors89/study/tree/master/typescript/8_Interface.md)**
 
-**NEXT > 10. Generic**
+**NEXT > [10. Generic](https://github.com/mirrors89/study/tree/master/typescript/10_Generic.md)**
