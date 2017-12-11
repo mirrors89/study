@@ -173,11 +173,90 @@ inventory.sort(comparing(Apple::getWeight));
 ```
 
   - 메서드 레퍼런스를 만드는방법
-    -
+    - 정적 메서드 레퍼런스 (Integer::parseInt)
+    - 다양한 형식의 인스턴스 메서드 (String::length)
+    - 기존 객체의 인스턴스 메서드 레퍼런스 (expensiveTransaction::getValue)
+
+```java
+List<String> str = Arrays.asList("a","b","A","B");
+
+// 람다 표현식
+str.sort((s1, s2) -> s1.compareToIgnoreCase(s2));
+
+// 메서드 레퍼런스
+str.sort(String::compareToIgnoreCase);
+```
 
   - 생성자 레퍼런스
+    - ClassName::new 처럼 클래스명과 new 키워드를 이용해서 기존 생성자의 레퍼런스를 만들 수 있다.
+```java
+// Apple()
+// Supplier = () -> T
+Supplier<Apple> c1 = Apple::new;
+Apple a1 = c1.get();
 
+Supplier<Apple> c1 = () -> new Apple();
+Apple a1 = c1.get();
 
-#### 7. 람다, 메서드 레퍼런스 활용하기
+// Apple(Integer weight)
+// Function = T -> R
+Function<Integer, Apple> c2 = Apple::new;
+Apple a2 = c2.apply(100);
+
+Function<Integer, Apple> c2 = (weight) -> new Apple(weight);
+Apple a2 = c2.apply(100);
+
+// Apple(String color, Integer weight)
+// BiFunction = (T, U) -> R
+BiFunction<String, Integer, Apple> c2 = Apple::new;
+Apple a2 = c2.apply("green", 100);
+
+Function<Integer, Apple> c2 = (color, weight) -> new Apple(color, weight);
+Apple a2 = c2.apply("green", 100);
+```
+
+#### 7. 람다, 메서드 레퍼런스 활용하
+  - 1단계 코드전달
+    - sort 메서드 시그니쳐  
+  ```java
+  void sort(Comparator<? super E> c)
+  ```
+  - Comparator 객체를 인수로받아 두개의 사과를 비교하여 sort하는 코드
+  ```java
+  public class AppleComparator implements Comparator<Apple> {
+    public int compare(Apple a1, Apple a2) {
+      return a1.getWeight().compareTo(a2.getWeight());
+    }
+  }
+  inventory.sort(new AppleComparator());
+  ```
+
+  - 2단계 익명 클래스 사용
+    - 한번만 사용할 Comparetor를 구현하는것 보다 익명클래스를 이용하는 것이 좋다.
+  ```java
+  inventory.sort(new Comparator<Apple>() {
+    public int compare(Apple a1, Apple a2) {
+      return a1.getWeight().compareTo(a2.getWeight());
+    }
+  });
+  ```
+
+  - 3단계 람다 표현식 사용
+    - Comparator 의 함수 디스크립션은 (T, T) -> int 이다.
+```java
+// 람다 표현식으로 작성
+inventory.sort((Apple a1, Apple a2) -> a1.getWeight().compareTo(a2.getWeight()));
+
+// 형식 추론으로 파라미터 형식 생략 가능
+inventory.sort((a1, a2) -> a1.getWeight().compareTo(a2.getWeight()));
+
+// comparing Function을 이용해서 코드 가독성 향상
+inventory.sort(comparing((a) -> a.getWight());
+```
+  - 4단계 메서드 레퍼런스 사용
+```java
+inventory.sort(comparing(Apple::getWight));
+```
+
 
 #### 8. 람다 표현식을 조합할 수 있는 유용한 메서드
