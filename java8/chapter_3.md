@@ -163,6 +163,19 @@ String twoLine = processFile((BufferedReader br) -> br.readLine() + br.readLine(
   portNumber = 31337;
   ```
 #### 6. 메서드 레퍼런스
+  - 특정 메서드만 호출하는 람다의 축약형
+  - 명시적으로 메서드명을 참조함으로써 가독성을 높일 수 있다.
+  - 메서드 명 앞에 구분자(::)를 붙이는 방식
+
+```java
+inventory.sort((Apple a1, Apple a2) -> a1.getWeight().compareTo(a2.getWeight()));
+inventory.sort(comparing(Apple::getWeight));
+```
+
+  - 메서드 레퍼런스를 만드는방법
+    -
+
+  - 생성자 레퍼런스
 
 
 #### 7. 람다, 메서드 레퍼런스 활용하기
