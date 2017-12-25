@@ -224,3 +224,51 @@ Map<Dish.Type, Dish> mostCaloricByType =
 
 
 #### 4. 분할
+- 분할 함수라 불리는 프레디케이트를 분류 함수로 사용하는 특수한 그룹화 기능
+- 맵의 키 형식은 Boolean 이다.
+- 최대 두 개의 그룹으로 분류된다.
+
+```java
+Map<Boolean, List<Dish>> partitionedMenu =
+      menu.stream().collect(partitioningBy(Dish::isVegetarian));
+List<Dish> vagetarianDishes = partitionedMenu.get(true);
+
+// filter를 이용해도 같은 값이 나온다.
+List<Dish> vagetarianDishes =
+      menu.stream().filter(Dish::isVegetarian).collect(toList());
+```
+
+###### 4.1 분할의 장점
+- 참, 거짓 두 가지 요소의 스트림 리스트를 모두 유지한다는 것이 분할의 장점
+
+```java
+Map<Boolean, Map<Dish.Type, List<Dish>>> vegtarianDishesByType =
+        menu.stream().collect(partitioningBy(Dish::isVegetarian, groupingBy(Dish::getType)));
+
+Map<Boolean, Dish> mostCaloricPartitionedByVegtarian =
+        menu.stream().collect(partitioningBy(Dish::isVegetarian,
+                collectingAndThen(maxBy(Comparator.comparingInt(Dish::getCalories)), Optional::get)));
+```
+
+###### 4.2 숫자를 소수와 비소수로 분할하기
+
+
+#### 5. Collector 인터페이스
+-
+
+```java
+// Collector 인터페이스
+public interface Collector<T, A, R> {
+  Supplier<A> supplier();
+  BiConsumer<A, T> accumulator();
+  Function<A, R> finisher();
+  BinaryOperator<A> combiner();
+  Set<Characteristics> characteristics();
+}
+```
+- T 는 수집될 스트림 항목의 제네릭 형태
+- A 는 누적자. 즉 수집 과정에서 중간 결과를 누적하는 객체의 형태
+- R 은 수집 연산 결과의 형식
+
+
+#### 6. 커스텀 컬렉터를 구현해서 성능 개선하기
