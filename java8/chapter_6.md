@@ -242,6 +242,7 @@ List<Dish> vagetarianDishes =
 - 참, 거짓 두 가지 요소의 스트림 리스트를 모두 유지한다는 것이 분할의 장점
 
 ```java
+// groupingBy와 비슷하게 두번째 인자를 컬렉터 형식을 받음
 Map<Boolean, Map<Dish.Type, List<Dish>>> vegtarianDishesByType =
         menu.stream().collect(partitioningBy(Dish::isVegetarian, groupingBy(Dish::getType)));
 
@@ -251,6 +252,28 @@ Map<Boolean, Dish> mostCaloricPartitionedByVegtarian =
 ```
 
 ###### 4.2 숫자를 소수와 비소수로 분할하기
+- 먼저 주어진 수가 소수인지 아닌지 판단하는 프리디 케이트를 구현
+
+```java
+public boolean isPrime(int candidate) {
+    return IntStream.range(2, candidate).noneMatch(i -> candidate % i == 0);
+}
+```
+- 소수의 대상을 주어진 수의 제곱근 이하의 수로 제한할 수 있다.
+
+```java
+public boolean isPrime(int candidate) {
+    int candidateRoot = (int) Math.sqrt((double) candidate);
+    return IntStream.rangeClosed(2, candidateRoot).noneMatch(i -> candidate % i == 0);
+}
+```
+- partitioningBy를 이용해 소수와 비소수로 분류할 수 있다.
+
+```java
+public Map<Boolean, List<Integer>> partitionPrimes(int n) {
+    return IntStream.rangeClosed(2, n).boxed().collect(partitioningBy(candidate -> isPrime(candidate)));
+}
+```
 
 
 #### 5. Collector 인터페이스
