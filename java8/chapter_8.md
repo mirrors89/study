@@ -153,7 +153,7 @@ String oneLine = processFile((BuffedReader b) -> b.readLine());
 String twoLine = processFile((BuffedReader b) -> b.readLine() + b.readLine());
 
 public static String processFile(BufferedReaderProcessor p) throws IOException {
-  try(BufferedReader br = new BuffedReader(new FileReader("java8inaction/chap8/data.txt"))) {
+  try (BufferedReader br = new BuffedReader(new FileReader("java8inaction/chap8/data.txt"))) {
     return p.process(br);
   }
 }
@@ -161,3 +161,166 @@ public interface BuffedReaderProcessor {
   String process(BufferedReader b) throws IOException;
 }
 ```
+
+
+#### 2. 람다로 객체지향 디자인 패턴 리펙토링
+
+##### 2.1 전략
+- 전략 패턴은 세부분으로 구성
+  - 알고리즘을 나타나는 인터페이스 (Strategy 인터페이스)
+  - 다양한 알고리즘을 나타내는 한 개 이상의 인터페이스 구현
+  - 전략 객체를 사용하는 한개 이상의 클라이언트
+
+```java
+public interface ValidationStrategy {
+    public boolean execute(String s);
+}
+
+public static private class IsAllLowerCase implements ValidationStrategy {
+    public boolean execute(String s){
+        return s.matches("[a-z]+");
+    }
+}
+public static private class IsNumeric implements ValidationStrategy {
+    public boolean execute(String s){
+        return s.matches("\\d+");
+    }
+}
+
+public class Validator{
+    private final ValidationStrategy strategy;
+
+    public Validator(ValidationStrategy v){
+        this.strategy = v;
+    }
+    public boolean validate(String s){
+        return strategy.execute(s);
+    }
+}
+
+// 실행부
+
+// 자바 7 이전 전략 패턴 방식
+Validator v1 = new Validator(new IsNumeric());
+System.out.println(v1.validate("aaaa"));
+Validator v2 = new Validator(new IsAllLowerCase ());
+System.out.println(v2.validate("bbbb"));
+
+
+// 람다 표현식 전략 패턴
+// Predicate<String> 과 같은 함수 디스크립터를 갖고 있음.
+Validator v3 = new Validator((String s) -> s.matches("\\d+"));
+System.out.println(v3.validate("aaaa"));
+Validator v4 = new Validator((String s) -> s.matches("[a-z]+"));
+System.out.println(v4.validate("bbbb"));
+```
+
+##### 2.2 템플릿 메서드
+- 알고리즘을 제시한 다음 알고리즘의 일부를 고칠 수 있는 유연함을 제공해야할 때 템플릿 메서드 디자인패턴을 이용함.
+
+```java
+// 자바 7 이전 템플릿 메서드 방식
+// 클래스를 상속을 받아 구현하여 사용할 수 있도록 템플릿을 제공하였다.
+abstract class OnlineBanking {
+    public void processCustomer(int id){
+        Customer c = Database.getCustomerWithId(id);
+        makeCustomerHappy(c);
+    }
+    abstract void makeCustomerHappy(Customer c);
+}
+
+```java
+// 람다 표현식을 사용한 템플릿 메서드 방식
+public class OnlineBankingLambda {
+    public void processCustomer(int id, Consumer<Customer> makeCustomerHappy){
+        Customer c = Database.getCustomerWithId(id);
+        makeCustomerHappy.accept(c);
+    }
+}
+
+// 클래스를 상속 받지 않고 람다 표현식을 전달해서 다양한 동작을 추가할 수 있다.
+public static void main(String[] args) {
+    new OnlineBankingLambda().processCustomer(1337, (Customer c) -> System.out.println("Hello!"));
+}
+
+```
+
+##### 2.3 옵저버
+-
+
+
+##### 2.4 의무 체인
+
+
+##### 2.5 팩토리
+
+
+#### 3. 람다 테스팅
+- 람다를 이용한 단위 테스팅
+
+##### 3.1 보이는 람다 표현식의 동작 테스팅
+- 람다를 필드에 저장해서 재사용할 수 있으며 람다의 로직을 테스트할 수 있다.
+- 람다표현식은 함수형 인터페이스의 인스턴스를 생성한다는 사실을 기억하자.
+
+```java
+public class Point {
+  ...
+  public static final Comparator<Point> compareByXAndThenY =
+          comparing(Point::getX).thenComparing(Point::getY);
+
+}
+
+@Test
+public void testComparingTwoPoints() throws Exception {
+    Point p1 = new Point(10, 15);
+    Point p2 = new Point(10, 20);
+
+    int result = Point.compareByXAndThenY.compare(p1, p2);
+    assertEquals(-1, result);
+
+}
+```
+
+##### 3.2 람다를 사용하는 메서드의 동작에 집중하라
+- 람다의 목표는 정해진 동작을 다른 메서드에서 사용할 수 있도록 하나의 조각으로 캡슐화 하는 것이다.
+- 세부 구현을 포함하는 람다 표현식을 공개하지 말아야 한다.
+
+```java
+public class Point {
+  ...
+  public static List<Point> moveAllPointsRightBy(List<Point> points, int x) {
+      return points.stream().map(p -> new Point(p.getX() + x, p.getY())).collect(toList());
+  }
+}
+
+@Test
+public void testMoveAllPointsRightBy() throws Exception {
+    List<Point> points = Arrays.asList(new Point(5,5), new Point(10,5));
+    List<Point> expectedPoints = Arrays.asList(new Point(15,5), new Point(20,5));
+
+    List<Point> newPoints = Point.moveAllPointsRightBy(points, 10);
+
+    assertEquals(expectedPoints, newPoints);
+}
+```
+
+##### 3.3 복잡한 람다를 개별 메서드로 분할하기
+- 복잡한 람다 표현식은 테스트 코드에서 메서드 레퍼런스로 바꿔 일반 메서드를 테스트 하듯이 람다 표현식을 테스트할 수 있다.
+
+##### 3.4 고차원 함수 테스팅
+- 함수를 인수로 받거나 다른 함수를 반환하는 메서드는 사용하기 어렵다.
+- 메서드가 람다를 인수로 받는다면 다른 람다로 메서드의 동작을 테스트할 수 있다.
+
+```java
+@Test
+public void testFilter() throws Exception {
+    List<Integer> numbers = Arrays.asList(1,2,3,4);
+    List<Integer> even = filter(numbers, i -> i % 2 == 0);
+    List<Integer> smallerThenThree = filter(numbers, i -> i < 3);
+
+    assertEquals(Arrays.asList(2, 4), even);
+    assertEquals(Arrays.asList(1, 2), smallerThenThree);
+}
+```
+
+#### 4. 디버깅

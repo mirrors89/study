@@ -267,3 +267,17 @@ public static long forkJoinSum(long n) {
 
 
 ![포크/조인 프레임워크에서 사용하는 작업 훔치기 알고리즘](./image/chapter7_3.jpg)
+
+
+#### 3. Spliterator
+- 분할할 수 있는 반복자라는 의미
+- Iterator처럼 탐색 기능을 제공 하지만, 병렬 작업에 특화 되어있다.
+
+```java
+public interface Spliterator<T> {
+  boolean tryAdvance(Consumer<? super T> action);
+  Spliterator<T> trySplit();
+  long estimateSize();
+  int characteristics();
+}
+```
